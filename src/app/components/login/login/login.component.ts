@@ -2,10 +2,12 @@ import { Component } from '@angular/core';
 import { Spotify } from '../../../business/models/spotify/spotify';
 import { FormsModule } from '@angular/forms';
 import { SpotifyService } from '../../../business/service/spotify/spotify.service';
+import {RouterOutlet} from '@angular/router';
+import {MeteoComponent} from '../../meteo/meteo/meteo.component';
 
 @Component({
   selector: 'app-login',
-  imports: [FormsModule],
+  imports: [FormsModule, MeteoComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
