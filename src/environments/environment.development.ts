@@ -1,7 +1,7 @@
 export const environment = {
 
     //Spotify
-    UrlSprotify : 'https://accounts.spotify.com/api/',
+    apiUrlSpotify : 'https://api.spotify.com/v1',
     redirectUri : 'http://localhost:4200/callback',
     clientId : '',
     clientSecret : ''

@@ -1,46 +1,39 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Spotify } from '../../../business/models/spotify/spotify';
 import { FormsModule } from '@angular/forms';
 import { SpotifyService } from '../../../business/service/spotify/spotify.service';
+import { SpotifyComponent } from '../../spotify/spotify/spotify.component';
 
 @Component({
   selector: 'app-login',
-  imports: [FormsModule],
+  imports: [FormsModule, SpotifyComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit{
 
   logs: Spotify = {
     clientID: "",
     clientSecret: ""
   }
+  accessToken: string | null = null;
 
   profile: any;
 
   constructor(private spotifyService: SpotifyService) {}
 
   ngOnInit(): void {
-    const queryParams = new URLSearchParams(window.location.search);
-    const code = queryParams.get('code');
-
-    if (code) {
-      this.spotifyService.getAccessToken(code).then((token) => {
-        this.spotifyService.fetchProfile(token).then((profile) => {
-          this.profile = profile;
-        });
-      });
-    }
+    this.spotifyService.getAccessToken().subscribe({
+      next: (response) => {
+        console.log('Réponse de Spotify:', response);
+        this.accessToken = response.access_token;
+      },
+      error: (error) => {
+        console.error('Erreur lors de la récupération du token:', error);
+      }
+    });
+    
   }
 
-  login(): void {
-    this.spotifyService.redirectToAuthCodeFlow();
-  }
-
-  onSubmit(): void {
-    console.log('Client ID:', this.logs.clientID);
-    console.log('Client Secret:', this.logs.clientSecret);
-  }
-
-
+  
 }
