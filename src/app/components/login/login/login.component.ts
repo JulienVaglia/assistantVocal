@@ -2,11 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { Spotify } from '../../../business/models/spotify/spotify';
 import { FormsModule } from '@angular/forms';
 import { SpotifyService } from '../../../business/service/spotify/spotify.service';
+import {RouterOutlet} from '@angular/router';
+import {MeteoComponent} from '../../meteo/meteo/meteo.component';
 import { SpotifyComponent } from '../../spotify/spotify/spotify.component';
 
 @Component({
   selector: 'app-login',
-  imports: [FormsModule, SpotifyComponent],
+  imports: [FormsModule, SpotifyComponent,MeteoComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
@@ -32,8 +34,8 @@ export class LoginComponent implements OnInit{
         console.error('Erreur lors de la récupération du token:', error);
       }
     });
-    
+
   }
 
-  
+
 }
