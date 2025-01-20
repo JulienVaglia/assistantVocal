@@ -1,1 +1,53 @@
-<p>spotify works!</p>
+<div class="container">
+    <h1>Recherche Spotify</h1>
+
+    <!-- Champ de recherche -->
+    <div class="form-group">
+        <input type="text" class="form-control" [(ngModel)]="query" placeholder="Entrez un titre de morceau" />
+    </div>
+
+    <!-- Bouton de recherche -->
+    <div class="form-group mt-3">
+        <button class="btn btn-primary" (click)="searchSpotify()">Rechercher</button>
+    </div>
+
+    <!-- Résultats de recherche -->
+    <h2>Résultats :</h2>
+
+    <div class="row">
+        @for (track of searchResults; track track.id){
+        <div class="col-12 col-md-4 mt-4">
+            <div class="card">
+                <div class="card-body">
+                    <!-- Nom de la piste et artiste -->
+                    <h5 class="card-title">
+                        {{ track.name }} de {{ track.artists[0].name}}
+                    </h5>
+                    <p class="card-text">Album : {{ searchResults[0].album.name }}</p>
+
+                    <!-- Bouton Lecture -->
+                    <button class="btn btn-primary" (click)="playPreview(searchResults[0].external_urls)"
+                        [disabled]="!searchResults[0]?.external_urls">
+                        {{ searchResults[0]?.external_urls ? "Écouter un extrait" : "Aucun extrait disponible" }}
+                    </button>
+                </div>
+            </div>
+        </div>
+
+
+        }
+
+    </div>
+
+    <!-- <div *ngIf="searchResults.length > 0" class="mt-4">
+        <h2>Résultats :</h2>
+        <ul class="list-group">
+            <li class="list-group-item" *ngFor="let track of searchResults">
+                <div>
+                    <strong>{{ track.name }}</strong> - {{ track.artists[0]?.name }}
+                </div>
+                <small>Album : {{ track.album.name }}</small>
+            </li>
+        </ul>
+    </div> -->
+</div>
