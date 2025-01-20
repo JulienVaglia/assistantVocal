@@ -2,52 +2,43 @@
     <h1>Recherche Spotify</h1>
 
     <!-- Champ de recherche -->
-    <div class="form-group">
-        <input type="text" class="form-control" [(ngModel)]="query" placeholder="Entrez un titre de morceau" />
-    </div>
+    <form (ngSubmit)="searchSpotify()">
 
-    <!-- Bouton de recherche -->
-    <div class="form-group mt-3">
-        <button class="btn btn-primary" (click)="searchSpotify()">Rechercher</button>
-    </div>
+        <div class="form-group">
+            <label for="query" class="form-label">Titre du morceau :</label>
+            <input name="query" type="text" class="form-control" id="query" [(ngModel)]="query"
+                placeholder="Entrez un titre de morceau" />
+        </div>
+
+
+        <button type="submit" class="btn btn-primary">Rechercher</button>
+
+    </form>
 
     <!-- Résultats de recherche -->
-    <h2>Résultats :</h2>
+    <!-- <h2>Résultats :</h2>
 
     <div class="row">
         @for (track of searchResults; track track.id){
         <div class="col-12 col-md-4 mt-4">
             <div class="card">
                 <div class="card-body">
-                    <!-- Nom de la piste et artiste -->
+
                     <h5 class="card-title">
                         {{ track.name }} de {{ track.artists[0].name}}
                     </h5>
                     <p class="card-text">Album : {{ searchResults[0].album.name }}</p>
 
-                    <!-- Bouton Lecture -->
-                    <button class="btn btn-primary" (click)="playPreview(searchResults[0].external_urls)"
-                        [disabled]="!searchResults[0]?.external_urls">
-                        {{ searchResults[0]?.external_urls ? "Écouter un extrait" : "Aucun extrait disponible" }}
-                    </button>
                 </div>
             </div>
         </div>
-
-
         }
-
     </div>
 
-    <!-- <div *ngIf="searchResults.length > 0" class="mt-4">
-        <h2>Résultats :</h2>
-        <ul class="list-group">
-            <li class="list-group-item" *ngFor="let track of searchResults">
-                <div>
-                    <strong>{{ track.name }}</strong> - {{ track.artists[0]?.name }}
-                </div>
-                <small>Album : {{ track.album.name }}</small>
-            </li>
-        </ul>
-    </div> -->
+    <h2>{{searchResults[0]?.id}}</h2> -->
+
+    <iframe style="border-radius:12px" [src]="getIframeUrl(searchResults[0]?.id)" width="100%" height="352"
+        frameBorder="0" allowfullscreen=""
+        allow="autoplay=1; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+
 </div>

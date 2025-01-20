@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { SpotifyService } from '../../../business/service/spotify/spotify.service';
 import { FormsModule } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-spotify',
@@ -14,7 +15,7 @@ export class SpotifyComponent implements OnInit{
   accessToken: string = ""; // Token d'accès
   searchResults: any[] = []; // Résultats de recherche
 
-  constructor( private spotifyService: SpotifyService ) {}
+  constructor( private spotifyService: SpotifyService, private sanitizer: DomSanitizer ) {}
 
   ngOnInit(): void {
     // Obtenir un token d'accès lors du chargement du composant
@@ -49,6 +50,11 @@ export class SpotifyComponent implements OnInit{
     } else {
       console.warn('Aucun extrait disponible pour ce titre.');
     }
+  }
+
+  getIframeUrl(trackId: string) {
+    const url = `https://open.spotify.com/embed/track/${trackId}?utm_source=generator&theme=0`;
+    return this.sanitizer.bypassSecurityTrustResourceUrl(url);  // Sanitize l'URL
   }
 
 }
