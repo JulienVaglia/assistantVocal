@@ -1,48 +1,106 @@
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { environment } from '../../../../environments/environment.development';
-import { Spotify } from '../../models/spotify/spotify';
-
+import { firstValueFrom } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class SpotifyService {
+  private clientId = '1795d6068e09425c880ad3ba73bc53a2';
+  private clientSecret: string = 'e800074070be4488b063004d1a6aab55';
+  private redirectUri = 'http://localhost:4200'; 
 
-  private redirectUri = 'http://localhost:4200/callback';
-  private accessToken: string | null = null;
+  private tokenEndpoint = 'https://accounts.spotify.com/api/token';
+  private authorizeEndpoint = 'https://accounts.spotify.com/authorize';
+  private scopes = 'user-read-private user-read-email'; // Scopes nécessaires
+  private verifierKey = 'code_verifier'; // Stocker le code verifier dans localStorage
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
-  // Obtenir un token d'accès
-  authenticate(logs: Spotify): Observable<any> {
-    const body = new URLSearchParams();
-    body.set('grant_type', 'client_credentials');
+  /**
+   * Redirige l'utilisateur vers la page d'autorisation de Spotify
+   */
+  async redirectToAuthCodeFlow() {
+    const verifier = this.generateCodeVerifier(128);
+    const challenge = await this.generateCodeChallenge(verifier);
 
-    const headers = new HttpHeaders({
-      Authorization: `Basic ${btoa(`${logs.clientID}:${logs.clientSecret}`)}`,
-      'Content-Type': 'application/x-www-form-urlencoded',
-    });
-    console.log("authenticate:", this.http.post(environment.UrlSprotify + '/token', body.toString(), { headers }))
-    return this.http.post(environment.UrlSprotify + '/token', body.toString(), { headers });
+    // Stocke le code verifier pour l'utiliser lors de la demande de token
+    localStorage.setItem(this.verifierKey, verifier);
+
+    // Paramètres de la requête d'autorisation
+    const params = new HttpParams()
+      .set('client_id', this.clientId)
+      .set('response_type', 'code')
+      .set('redirect_uri', this.redirectUri)
+      .set('scope', this.scopes)
+      .set('code_challenge_method', 'S256')
+      .set('code_challenge', challenge);
+
+    // Redirection vers la page d'autorisation Spotify
+    document.location.href = `${this.authorizeEndpoint}?${params.toString()}`;
   }
 
-  // Rechercher un morceau
-  searchTrack(query: string): Observable<any> {
-    if (!this.accessToken) {
-      throw new Error('Token non disponible. Authentifiez-vous d\'abord.');
+  /**
+   * Obtient un token d'accès avec un code d'autorisation
+   */
+  async getAccessToken(code: string): Promise<string> {
+    const verifier = localStorage.getItem(this.verifierKey);
+    if (!verifier) {
+      throw new Error('Code introuvable dans localStorage.');
     }
 
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${this.accessToken}`
-    });
+    const body = new HttpParams()
+      .set('client_id', this.clientId)
+      .set('grant_type', 'authorization_code')
+      .set('code', code)
+      .set('redirect_uri', this.redirectUri)
+      .set('code_verifier', verifier);
 
-    return this.http.get(`https://api.spotify.com/v1/search?q=${query}&type=track`, { headers });
+    // Appel API pour obtenir le token
+    const response: any = await firstValueFrom(
+      this.http.post(this.tokenEndpoint, body.toString(), {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      })
+    );
+
+    const accessToken = response.access_token;
+    localStorage.setItem('spotify_access_token', accessToken); // Optionnel : stockage local
+    return accessToken;
   }
 
-  // Définir le token d'accès après authentification
-  setAccessToken(token: string): void {
-    this.accessToken = token;
+  /**
+   * Récupère le profil de l'utilisateur à l'aide du token d'accès
+   */
+  async fetchProfile(token: string): Promise<any> {
+    const response: any = await firstValueFrom(
+      this.http.get('https://api.spotify.com/v1/me', {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+    );
+    return response;
+  }
+
+  /**
+   * Génère un code verifier pour le flux PKCE
+   */
+  private generateCodeVerifier(length: number): string {
+    const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let text = '';
+    for (let i = 0; i < length; i++) {
+      text += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+    return text;
+  }
+
+  /**
+   * Génère un code challenge (SHA256 -> Base64) pour le flux PKCE
+   */
+  private async generateCodeChallenge(codeVerifier: string): Promise<string> {
+    const data = new TextEncoder().encode(codeVerifier);
+    const digest = await window.crypto.subtle.digest('SHA-256', data);
+    return btoa(String.fromCharCode(...new Uint8Array(digest)))
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/, '');
   }
 }

@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
-import { SpotifyService } from '../../../business/service/spotify/spotify.service';
 import { Spotify } from '../../../business/models/spotify/spotify';
 import { FormsModule } from '@angular/forms';
+import { SpotifyService } from '../../../business/service/spotify/spotify.service';
 
 @Component({
   selector: 'app-login',
-  standalone: true,
   imports: [FormsModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
@@ -16,13 +15,32 @@ export class LoginComponent {
     clientID: "",
     clientSecret: ""
   }
- 
-  constructor(readonly spotifyService: SpotifyService) {
 
+  profile: any;
+
+  constructor(private spotifyService: SpotifyService) {}
+
+  ngOnInit(): void {
+    const queryParams = new URLSearchParams(window.location.search);
+    const code = queryParams.get('code');
+
+    if (code) {
+      this.spotifyService.getAccessToken(code).then((token) => {
+        this.spotifyService.fetchProfile(token).then((profile) => {
+          this.profile = profile;
+        });
+      });
+    }
   }
 
-  public getSpotyToken() {
-    this.spotifyService.authenticate(this.logs)
-
+  login(): void {
+    this.spotifyService.redirectToAuthCodeFlow();
   }
+
+  onSubmit(): void {
+    console.log('Client ID:', this.logs.clientID);
+    console.log('Client Secret:', this.logs.clientSecret);
+  }
+
+
 }
