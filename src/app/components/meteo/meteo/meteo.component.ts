@@ -1,7 +1,6 @@
 import {Component} from '@angular/core';
 import {MeteoService} from '../../../business/service/meteo/meteo.service';
 import {FormsModule} from '@angular/forms';
-import {fromInteropObservable} from 'rxjs/internal/observable/innerFrom';
 
 @Component({
   selector: 'app-meteo',
@@ -14,6 +13,7 @@ import {fromInteropObservable} from 'rxjs/internal/observable/innerFrom';
 export class MeteoComponent {
   weatherData: any;
   errorMessage: any;
+  weatherIconUrl: string | undefined;
   city: string = "marseille"
 
   constructor(private meteoService: MeteoService) {
@@ -33,11 +33,13 @@ export class MeteoComponent {
     this.meteoService.getWeather(this.city).subscribe(
       data => {
         this.weatherData = data;
-        console.log(data.weather)
+        if (data.weather && data.weather[0]) {
+          this.weatherIconUrl = `http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
+        }
       }
       ,
       error => {
-        console.error('Erreur lors de la récupération des données météo:', error);
+       this.errorMessage = "veuillez réessayer";
       }
     )
   }
