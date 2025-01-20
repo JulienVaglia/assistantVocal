@@ -17,4 +17,22 @@
     Sign in
   </button>
 </form>
+<div>
+  <h1>Enregistrement Audio</h1>
+
+  <button (click)="toggleRecording()">
+    {{ isRecording ? "arreter" : "démarrer"  }}
+  </button>
+
+  <button (click)="playAudio()" [disabled]="!isRecording && !transcription">
+    Écouter l'enregistrement
+  </button>
+
+ @if(transcription){
+   <div >
+     <h3>Transcription :</h3>
+     <p>{{ transcription }}</p>
+   </div>
+ }
+</div>
 <app-meteo></app-meteo>

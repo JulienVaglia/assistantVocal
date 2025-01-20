@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { VoiceService } from './voice.service';
+import { VoiceService } from './voiceRecorder.service';
 
 describe('VoiceService', () => {
   let service: VoiceService;
