@@ -1,4 +1,4 @@
-<div class="card" style="width: 18rem;">
+<div class=" container shadow-lg p-3 mb-5 bg-body-tertiary rounded card bg-primary-subtle" style="width: 18rem;">
 <form (ngSubmit)="getWeatherData()">
   <div class="mb-3">
     <label for="cityName" class="form-label">Votre ville </label>
@@ -6,17 +6,19 @@
   </div>
   <button type="submit" class="btn btn-primary">Submit</button>
 </form>
-</div>
+  @if(errorMessage){
+    <span class="alert alert-danger mt-3">{{errorMessage}}</span>
+  }
 @if(weatherData){
   <div class="card-body">
-    <h2>Météo à {{ weatherData.name }}</h2>
-    <p>Température : {{ weatherData.main.temp }}°C</p>
-    <p>Humidité : {{ weatherData.main.humidity }}%</p>
-    <p>Conditions : {{ weatherData.weather[0].description }}</p>
+    <img class="card-img-top" [src]="weatherIconUrl" [alt]="weatherData.weather[0].description" />
+    <h5 class="card-title">Météo à {{ weatherData.name }}</h5>
+    <p class="card-text">Température : {{ weatherData.main.temp }}°C</p>
+    <p class="card-text">Humidité : {{ weatherData.main.humidity }}%</p>
+    <p class="card-text">Conditions : {{ weatherData.weather[0].description }}</p>
 
   </div>
 }
-@if(errorMessage){
-  <span class="alert alert-danger mt-3">{{errorMessage}}</span>
-}
+
+</div>
 
