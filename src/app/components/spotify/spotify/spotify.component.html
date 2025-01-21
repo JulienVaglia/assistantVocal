@@ -1,41 +1,10 @@
 <div class="container">
-    <h1>Recherche Spotify</h1>
 
-    <!-- Champ de recherche -->
     <form (ngSubmit)="searchSpotify()">
 
-        <div class="form-group">
-            <label for="query" class="form-label">Titre du morceau :</label>
-            <input name="query" type="text" class="form-control" id="query" [(ngModel)]="query"
-                placeholder="Entrez un titre de morceau" />
-        </div>
-
-
-        <button type="submit" class="btn btn-primary">Rechercher</button>
+        
 
     </form>
-
-    <!-- Résultats de recherche -->
-    <!-- <h2>Résultats :</h2>
-
-    <div class="row">
-        @for (track of searchResults; track track.id){
-        <div class="col-12 col-md-4 mt-4">
-            <div class="card">
-                <div class="card-body">
-
-                    <h5 class="card-title">
-                        {{ track.name }} de {{ track.artists[0].name}}
-                    </h5>
-                    <p class="card-text">Album : {{ searchResults[0].album.name }}</p>
-
-                </div>
-            </div>
-        </div>
-        }
-    </div>
-
-    <h2>{{searchResults[0]?.id}}</h2> -->
 
     <iframe style="border-radius:12px" [src]="getIframeUrl(searchResults[0]?.id)" width="100%" height="352"
         frameBorder="0" allowfullscreen=""
