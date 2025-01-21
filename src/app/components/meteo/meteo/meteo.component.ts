@@ -1,6 +1,6 @@
-import {Component} from '@angular/core';
-import {MeteoService} from '../../../business/service/meteo/meteo.service';
-import {FormsModule} from '@angular/forms';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { MeteoService } from '../../../business/service/meteo/meteo.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-meteo',
@@ -11,10 +11,11 @@ import {FormsModule} from '@angular/forms';
   styleUrl: './meteo.component.scss'
 })
 export class MeteoComponent {
+
   weatherData: any;
   errorMessage: any;
   weatherIconUrl: string | undefined;
-  city: string = "marseille"
+  @Input() city: string | undefined
 
   constructor(private meteoService: MeteoService) {
   }
@@ -22,6 +23,8 @@ export class MeteoComponent {
   ngOnInit() {
     this.getWeatherData();
   }
+
+  ngOnChanges(changes: SimpleChanges): void { if (changes['city']) { this.getWeatherData(); } }
 
   getWeatherData(): void {
     if (!this.city?.trim()) {
@@ -39,7 +42,7 @@ export class MeteoComponent {
       }
       ,
       error => {
-       this.errorMessage = "veuillez réessayer";
+        this.errorMessage = "veuillez réessayer";
       }
     )
   }

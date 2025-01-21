@@ -1,25 +1,19 @@
-<!-- <app-spotify></app-spotify>
-
-<app-meteo></app-meteo> -->
-
 <div class="container">
-    <h1>Commande vocale</h1>
-    <p>Essayez de dire : "Spotify" ou "Météo"</p>
+    <h1>Commande vocale et recherche Spotify</h1>
+    <p>Essayez de dire : "Spotify [titre de morceau ou artiste]" ou "Météo"</p>
   
-    <!-- Bouton pour activer la reconnaissance vocale -->
-    <button (click)="startRecognition()">Activer la reconnaissance vocale</button>
+    <!-- Bouton pour activer la reconnaissance vocale (en rouge pour ressembler à un bouton d'enregistrement) -->
+    <button (click)="startRecognition()" class="record-button">
+    </button>
   
     <!-- Message de diagnostic -->
     <p class="diagnostic">{{ diagnosticMessage }}</p>
   
-    <!-- Affichage conditionnel des composants -->
-    <!-- <app-spotify *ngIf="showSpotify"></app-spotify>
-    <app-meteo *ngIf="showMeteo"></app-meteo> -->
-
-    @if (showSpotify){
-        <app-spotify></app-spotify>
-    }
-    @if (showMeteo){
-        <app-meteo></app-meteo>
+    <!-- Affichage conditionnel du composant Spotify et Meteo -->
+    @if (showSpotify ){
+        <app-spotify [query] = "query"></app-spotify>
+     }
+     @if (showMeteo ){
+        <app-meteo [city] = "city"></app-meteo>
     }
   </div>
