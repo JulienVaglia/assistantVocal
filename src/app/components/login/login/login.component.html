@@ -1,3 +1,25 @@
-<app-spotify></app-spotify>
+<!-- <app-spotify></app-spotify>
 
-<app-meteo></app-meteo>
+<app-meteo></app-meteo> -->
+
+<div class="container">
+    <h1>Commande vocale</h1>
+    <p>Essayez de dire : "Spotify" ou "Météo"</p>
+  
+    <!-- Bouton pour activer la reconnaissance vocale -->
+    <button (click)="startRecognition()">Activer la reconnaissance vocale</button>
+  
+    <!-- Message de diagnostic -->
+    <p class="diagnostic">{{ diagnosticMessage }}</p>
+  
+    <!-- Affichage conditionnel des composants -->
+    <!-- <app-spotify *ngIf="showSpotify"></app-spotify>
+    <app-meteo *ngIf="showMeteo"></app-meteo> -->
+
+    @if (showSpotify){
+        <app-spotify></app-spotify>
+    }
+    @if (showMeteo){
+        <app-meteo></app-meteo>
+    }
+  </div>

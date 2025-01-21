@@ -53,7 +53,7 @@ export class SpotifyComponent implements OnInit{
   }
 
   getIframeUrl(trackId: string) {
-    const url = `https://open.spotify.com/embed/track/${trackId}?utm_source=generator&theme=0`;
+    const url = `https://open.spotify.com/embed/track/${trackId}?utm_source=generator&theme=0&autoplay=1`;
     return this.sanitizer.bypassSecurityTrustResourceUrl(url);  // Sanitize l'URL
   }
 
