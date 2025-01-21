@@ -10,13 +10,14 @@ import { SpotifyComponent } from '../../spotify/spotify/spotify.component';
   imports: [MeteoComponent, SpotifyComponent],
 })
 export class LoginComponent implements OnInit {
+  city: string = 'marseille';
   query: string = ''; // Texte de recherche pour Spotify
   showSpotify: boolean = false; // Afficher ou masquer <app-spotify>
   showMeteo: boolean = false; // Afficher ou masquer <app-meteo>
   diagnosticMessage: string = ''; // Message de diagnostic
   recognition: any; // Instance de reconnaissance vocale
 
-  constructor(private spotifyService: SpotifyService) {}
+  constructor(private spotifyService: SpotifyService) { }
 
   ngOnInit(): void {
     // Initialisation de la reconnaissance vocale
@@ -67,30 +68,39 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  // Traiter les commandes vocales
-  handleCommand(command: string): void {
-    console.log(`Commande reçue : "${command}"`);
+// Traiter les commandes vocales
+handleCommand(command: string): void {
+  console.log(`Commande reçue : "${command}"`);
 
-    // Commande pour afficher Spotify avec une recherche
-    if (command.includes('spotify')) {
-      const searchQuery = command.replace('spotify', '').trim(); // Extrait la recherche après "Spotify"
-      this.query = searchQuery; // Met à jour le champ de recherche
-      console.log(`Recherche Spotify déclenchée : "${this.query}"`);
-    }
+  // Réinitialiser les deux flags avant de traiter une nouvelle commande
+  this.showSpotify = false;
+  this.showMeteo = false;
 
-    // Commande pour afficher Météo
-    else if (command.includes('météo') || command.includes('meteo')) {
-      this.showMeteo = true;
-      this.showSpotify = false;
-      console.log('Commande reconnue : afficher Météo');
-    }
-
-    // Commande non reconnue
-    else {
-      console.warn(`Commande non reconnue : "${command}"`);
-      this.diagnosticMessage = `Commande non reconnue : "${command}"`;
-      this.showSpotify = false;
-      this.showMeteo = false;
-    }
+  // Commande pour afficher Spotify avec une recherche
+  if (command.includes('spotify')) {
+    const searchQuery = command.replace('spotify', '').trim(); // Extrait la recherche après "Spotify"
+    this.query = searchQuery; // Met à jour le champ de recherche
+    console.log(`Recherche Spotify déclenchée : "${this.query}"`);
+    this.showSpotify = true;
   }
+
+  // Commande pour afficher Météo
+  else if (command.includes('météo') || command.includes('meteo')) {
+    console.log('Commande reconnue : afficher Météo');
+    const cityMatch = command.match(/ville\s+de\s+([A-Z][a-z]*)/i);
+    if (cityMatch && cityMatch[1]) {
+      this.city = cityMatch[1].toLowerCase();
+      console.log('Ville détectée :', this.city);
+    } else {
+      console.log('Aucune ville spécifiée.');
+    }
+    this.showMeteo = true;
+  }
+
+  // Commande non reconnue
+  else {
+    console.warn(`Commande non reconnue : "${command}"`);
+    this.diagnosticMessage = `Commande non reconnue : "${command}"`;
+  }
+}
 }
